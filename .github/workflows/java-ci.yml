@@ -38,7 +38,7 @@ jobs:
         java HelloWorld > output.txt
 
         # Kiểm tra file output.txt
-        if grep -q "Hello World!" output.txt; then
+        if grep -q "Vinh Tran" output.txt; then
           echo "Test Passed: Output is correct."
         else
           echo "Test Failed: Output is not correct."
