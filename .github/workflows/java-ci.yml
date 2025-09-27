@@ -1,0 +1,47 @@
+# Tên của Workflow này, sẽ hiển thị trên GitHub Actions tab
+name: Java CI Build
+
+# Trigger (kích hoạt) Workflow này khi nào
+on:
+  push:
+    branches: [ main, master ] # Kích hoạt khi có push vào các nhánh main hoặc master
+  pull_request:
+    branches: [ main, master ] # Kích hoạt khi có Pull Request
+
+# Định nghĩa các công việc (jobs) sẽ được thực hiện
+jobs:
+  build:
+    # Chỉ định môi trường chạy (runner)
+    runs-on: ubuntu-latest
+
+    # Các bước thực hiện
+    steps:
+    - name: Checkout code
+      # Sử dụng action để tải mã nguồn về môi trường chạy
+      uses: actions/checkout@v4
+
+    - name: Set up Java
+      # Sử dụng action để cài đặt Java Development Kit (JDK)
+      uses: actions:setup-java@v4
+      with:
+        java-version: '17' # Phiên bản Java
+        distribution: 'temurin' # Nhà phân phối JDK
+
+    - name: Compile and Run Java Program
+      # Do đây là file Java đơn lẻ (không dùng Maven/Gradle), chúng ta biên dịch thủ công
+      # Lệnh biên dịch file HelloWorld.java
+      run: |
+        echo "Compiling HelloWorld.java..."
+        javac HelloWorld.java
+
+        # Lệnh chạy chương trình đã biên dịch và in kết quả ra console
+        echo "Running HelloWorld..."
+        java HelloWorld
+
+        # Kiểm tra kết quả chạy có đúng là "Hello World!" không
+        if grep -q "Hello World!" output.txt; then
+          echo "Test Passed: Output is correct."
+        else
+          echo "Test Failed: Output is not correct."
+          exit 1
+        fi
