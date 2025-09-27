@@ -46,3 +46,9 @@ jobs:
           cat output.txt
           exit 1
         fi
+    - name: Upload JAR Artifact
+      # Tùy chọn: Đăng file JAR lên GitHub để bạn có thể tải về
+      uses: actions/upload-artifact@v4
+      with:
+        name: HelloWorld-jar-file
+        path: HelloWorld.jar
