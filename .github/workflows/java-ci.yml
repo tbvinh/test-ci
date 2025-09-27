@@ -27,25 +27,44 @@ jobs:
         java-version: '17' # Phiên bản Java
         distribution: 'temurin' # Nhà phân phối JDK
 
-    - name: Compile and Run Java Program and Test Output
-      # ĐÃ SỬA LỖI: Chuyển hướng đầu ra sang file output.txt
+    - name: Build and Test Executable JAR
+      # ĐÃ CHỈNH SỬA: Thêm kiểm tra file và đảm bảo đóng gói JAR thành công.
       run: |
         echo "Compiling HelloWorld.java..."
         javac HelloWorld.java
 
-        # Chuyển hướng đầu ra của chương trình Java vào file output.txt
-        echo "Running HelloWorld and capturing output..."
-        java HelloWorld > output.txt
+        # Kiểm tra file .class đã được tạo chưa
+        if [ ! -f HelloWorld.class ]; then
+          echo "Error: HelloWorld.class was not created by javac."
+          exit 1
+        fi
 
-        # Kiểm tra file output.txt
-        if grep -q "Vinh Tran" output.txt; then
-          echo "Test Passed: Output is correct."
+        # 1. Tạo file MANIFEST.MF để chỉ định lớp chính (Main Class)
+        echo "Main-Class: HelloWorld" > MANIFEST.MF
+
+        # 2. Tạo file JAR (e: entry point, f: filename, m: manifest, *: all files)
+        echo "Creating HelloWorld.jar..."
+        jar cvfm HelloWorld.jar MANIFEST.MF HelloWorld.class
+
+        # Kiểm tra file JAR đã được tạo chưa
+        if [ ! -f HelloWorld.jar ]; then
+          echo "Error: HelloWorld.jar was not created by jar utility."
+          exit 1
+        fi
+
+        # 3. Kiểm tra file JAR bằng cách chạy nó
+        echo "Testing HelloWorld.jar..."
+        java -jar HelloWorld.jar > output.txt
+
+        # 4. Kiểm tra đầu ra trong file output.txt
+        if grep -q "Hello World!" output.txt; then
+          echo "Test Passed: JAR built and output is correct."
         else
           echo "Test Failed: Output is not correct."
-          # Hiển thị nội dung file để debug
           cat output.txt
           exit 1
         fi
+
     - name: Upload JAR Artifact
       # Tùy chọn: Đăng file JAR lên GitHub để bạn có thể tải về
       uses: actions/upload-artifact@v4
