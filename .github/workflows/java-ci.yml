@@ -27,21 +27,22 @@ jobs:
         java-version: '17' # Phiên bản Java
         distribution: 'temurin' # Nhà phân phối JDK
 
-    - name: Compile and Run Java Program
-      # Do đây là file Java đơn lẻ (không dùng Maven/Gradle), chúng ta biên dịch thủ công
-      # Lệnh biên dịch file HelloWorld.java
+    - name: Compile and Run Java Program and Test Output
+      # ĐÃ SỬA LỖI: Chuyển hướng đầu ra sang file output.txt
       run: |
         echo "Compiling HelloWorld.java..."
         javac HelloWorld.java
 
-        # Lệnh chạy chương trình đã biên dịch và in kết quả ra console
-        echo "Running HelloWorld..."
-        java HelloWorld
+        # Chuyển hướng đầu ra của chương trình Java vào file output.txt
+        echo "Running HelloWorld and capturing output..."
+        java HelloWorld > output.txt
 
-        # Kiểm tra kết quả chạy có đúng là "Hello World!" không
+        # Kiểm tra file output.txt
         if grep -q "Hello World!" output.txt; then
           echo "Test Passed: Output is correct."
         else
           echo "Test Failed: Output is not correct."
+          # Hiển thị nội dung file để debug
+          cat output.txt
           exit 1
         fi
